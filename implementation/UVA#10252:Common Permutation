@@ -1,0 +1,33 @@
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <sstream>
+#include <map>
+#include <queue>
+using namespace std;
+int main()
+{
+	string a, b;
+	while(getline(cin, a))
+	{
+		getline(cin, b);
+		vector<int> w1(26, 0), w2(26, 0), w3(26,0);
+		for(int i = 0; i < a.length(); i++)
+			w1[a[i]-'a']++;
+		for(int i = 0; i < b.length(); i++)
+			w2[b[i]-'a']++;
+		for(int i = 0; i < 26; i++)
+		{
+			int numOccur = min(w1[i], w2[i]);
+			char c = i+'a';
+			for(int j = 0; j < numOccur; j++)
+			{
+				cout<<c;
+			}
+		}
+		cout<<'\n';
+	}
+	return 0;
+}
