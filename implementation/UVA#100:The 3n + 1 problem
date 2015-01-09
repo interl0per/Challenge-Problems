@@ -1,0 +1,40 @@
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <string>
+using namespace std;
+
+int cycleLength(int n, int count)
+{
+	count++;
+	if(n==1)
+		return count;
+	else if (n%2==0)
+		return(cycleLength(n/2, count));
+	else
+		return(cycleLength(3*n + 1, count));
+}
+int main()
+{
+	int i,j;
+	while(cin>>i>>j)
+	{
+		bool swapped = false;
+		if(j < i)
+		{
+			swap(i,j);
+			swapped = true;
+		}
+		int maxCycle = 0;
+		for(int k = i; k <= j; k++)
+		{
+			int a = cycleLength(k, 0);
+			if(a>maxCycle)
+				maxCycle = a;
+		}
+		if(swapped) swap(i,j);
+		cout<<i<<' '<<j<<' '<<maxCycle<<'\n';
+	}
+	return 0;
+}
