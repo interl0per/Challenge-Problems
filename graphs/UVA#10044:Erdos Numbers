@@ -1,0 +1,118 @@
+//INCORRECT SOLUTION: time limit exceeded???
+ 
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <sstream>
+#include <map>
+#include <queue>
+using namespace std;
+
+map<string, vector<string> > authors;
+map<string, int> erdosNums;
+void bfs()
+{
+	map<string, bool> visited;
+	int depth = 0, j = 0;
+	queue<string> q;
+	q.push("Erdos, P.");
+	int quesize = q.size();
+	while(!q.empty())
+	{
+		string res = q.front();		
+		q.pop(); 
+		erdosNums[res] = depth;
+		visited[res] = true;
+		//cout<<res<<" PARENT\n";
+		//cout<<authors[res].size();
+		for(int i =0; i < authors[res].size(); i++)
+		{
+			//cout<<authors[res].at(i)<<'\n';
+			if(visited.count(authors[res].at(i))==0&&authors[res].at(i).compare(res)!=0)
+			{
+				//cout<<"Visiting him\n";
+				q.push(authors[res].at(i));
+				visited[res] = true;
+			}
+		}
+		j++;
+		if(j==quesize) 
+		{
+			j=0;
+			quesize = q.size();
+			depth++;
+		}
+	}
+}
+
+int main()
+{
+	int cases;
+	cin>>cases;
+	int str = cases;
+	while(cases--)
+	{
+		authors.clear();
+		erdosNums.clear();
+		int papers, numAuthors;
+		cin>>papers>>numAuthors;
+		cin.ignore();
+		for(int i = 0;i < papers; i++)
+		{
+			string line, name;
+			getline(cin, line);
+			int pos, lastPos = 0;
+			bool end = false;
+			vector<string> ca;
+			while(!end)
+			{
+				pos = line.find(".,", lastPos);
+				if(pos==-1) 
+				{
+					pos = line.find(".:");
+					end = true;
+				}
+
+				name = line.substr(lastPos, pos-lastPos+1);
+				lastPos = pos+3;
+				ca.push_back(name);
+			}
+			for(int j = 0; j < ca.size(); j++)
+			{
+				vector<string> caCopy = ca;
+				caCopy.erase(caCopy.begin()+j);
+				if(authors.count(ca[j])!=1)//this node does not exist
+				{
+					//cout<<"\nadding "<<ca[j]<<'\n';
+					authors[ca[j]]=caCopy;//create the node, remove itself
+					//system("PAUSE");
+				}
+				else//check if all coauthors exist
+				{
+					for(int k = 0; k < ca.size(); k++)
+					{
+						if(k!=j&&find(authors[ca[j]].begin(), authors[ca[j]].end(), ca[k])==authors[ca[j]].end());
+						{
+							authors[ca[j]].push_back(ca[k]);
+						}
+					}
+				}
+			}
+		}
+		bfs();
+		cout<<"Scenario "<<str-cases<<'\n';
+		for(int i = 0; i < numAuthors; i++)
+		{
+			string s;
+			getline(cin, s);
+			cout<<s;
+			if(erdosNums.count(s)==0)
+				cout<<" infinity\n";
+			else
+				cout<<' '<<erdosNums[s]<<'\n';
+		}
+	}
+	return 0;
+}
