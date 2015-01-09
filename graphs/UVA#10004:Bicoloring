@@ -1,0 +1,67 @@
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <sstream>
+#include <map>
+#include <queue>
+
+using namespace std;
+#define RED 1
+#define BLACK 0
+
+typedef struct
+{
+	int color;
+	vector<int> neighbors;
+}node;
+
+vector<node> graph;
+vector<bool> discovered;
+int inv(int color)
+{
+	if(color==BLACK)	return(RED);
+	else return BLACK;
+}
+string colorBfs(node parent)
+{
+	queue<node> next;
+	next.push(parent);
+	while(!next.empty())
+	{
+		node parent = next.front();
+		next.pop();
+		for(int i = 0; i < parent.neighbors.size(); i++)
+		{
+			if(!discovered[parent.neighbors[i]])
+			{
+				graph[parent.neighbors[i]].color = inv(parent.color);
+				next.push(graph[parent.neighbors[i]]);
+				discovered[parent.neighbors[i]] = true;
+			}
+			else if(graph[parent.neighbors[i]].color==parent.color)
+				return("NOT BICOLORABLE.");
+		}
+	}
+	return "BICOLORABLE.";
+}
+int main()
+{
+	int numVerts, numEdges;
+	while(cin>>numVerts)
+	{
+		if(numVerts==0) return 0;
+		cin>>numEdges;
+		graph = vector<node>(numVerts);
+		discovered = vector<bool>(numVerts, false);
+		for(int i = 0; i < numEdges; i++)
+		{
+			int x, y;
+			cin>>x>>y;
+			graph[x].neighbors.push_back(y);
+			graph[y].neighbors.push_back(x);
+		}
+		cout<<colorBfs(graph[0])<<'\n';; 
+	}
+}
