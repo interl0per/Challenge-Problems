@@ -1,0 +1,43 @@
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <sstream>
+using namespace std;
+
+int main()
+{
+	string line;
+	while(true)
+	{
+		getline(cin, line);
+		if(line.empty()) return 0;
+		istringstream ss(line);
+		vector<int> diffs;
+		int x, last, n;
+		bool jolly = true, first = true;
+		ss>>n;
+		while(ss>>x)
+		{
+			if(!first)
+				diffs.push_back(abs(x-last));
+			else
+				first = false;
+			last = x;
+		}
+		sort(diffs.begin(), diffs.end());
+		for(int i = 1; i < n; i++)
+		{
+			if(diffs.at(i-1)!=i)
+			{
+				cout<<"Not jolly\n";
+				jolly = false;
+				break;
+			}
+		}
+		if(jolly)
+			cout<<"Jolly\n";
+	}
+	return 0;
+}
