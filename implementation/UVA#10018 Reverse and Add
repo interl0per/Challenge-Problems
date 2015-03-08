@@ -1,0 +1,50 @@
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <map>
+#include <math.h>
+#include <bitset>
+#include <queue>
+#include <sstream>
+
+using namespace std;
+
+bool isPalindrome(string s)
+{
+	for(int i = 0; i < s.length()/2; i++)
+		if(s[i]!=s[s.length()-i-1])
+			return false;
+	return true;
+}
+string reverse(string s)
+{
+	string res = "";
+	for(int i = s.length()-1; i >=0; i--)
+		res+=s[i];
+	return res;
+}
+int main()
+{
+	int nCases;
+	cin>>nCases;
+	for(int i = 0; i < nCases; i++)
+	{
+		string n,rev;
+		cin>>n;
+		int count = 0;
+		while(!isPalindrome(n))
+		{
+			rev = reverse(n);
+			long long temp = atol(n.c_str());
+			long long ans = atol(rev.c_str());
+			ans+=temp;
+			stringstream ss3;
+			ss3<<ans;
+			n = ss3.str();
+			count++;
+		}
+		cout<<count<<' '<<n<<'\n';
+	}
+}
