@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+#define MOD 1000000007
+
+struct edge
+{
+    int x,y,cap;
+    edge(){}
+    edge(int a, int b, int c)
+    {
+        x = a;
+        y = b;
+        cap = c;
+    }
+};
+struct union_find
+{
+    vector<int> parent;
+    union_find(int n)
+    {
+        parent = vector<int>(n);
+        for(int i= 0; i < n; i++)
+            parent[i] = i;
+    }
+    int find(int x)
+    {
+        if(parent[x]==x)
+            return x;
+        else
+        {
+            parent[x] = find(parent[x]);
+            return parent[x];
+        }
+    }
+    void unite(int x, int y)
+    {
+        parent[find(x)] = find(y);
+    }
+    bool same_component(int x, int y)
+    {
+        return(find(x)==find(y));
+    }
+};
+
+bool comp(edge a, edge b)
+{
+    return(a.cap > b.cap);
+}
+
+int main()
+{
+    int n,r;
+    int T = 1;
+    while(cin>>n>>r)
+    {
+        if(n+r==0)
+            return 0;
+        union_find vSets(n+1);
+        vector<edge> edges(r);
+        for(int i = 0; i < r; i++)
+        {
+            int x,y,w;
+            cin>>x>>y>>w;
+            edges[i] = edge(x,y,w);
+        }
+        sort(edges.begin(), edges.end(), comp);
+
+        int s, t, ppl;
+        cin>>s>>t>>ppl;
+        int i = 0, weight = 0;
+        while(!vSets.same_component(s,t))
+        {
+            vSets.unite(edges[i].x, edges[i].y);
+            weight = edges[i].cap;
+            i++;
+        }
+        cout<<"Scenario #"<<T<<'\n';
+        cout<<"Minimum Number of Trips = "<<ceil((double)(ppl)/(double)(weight-1))<<"\n\n";
+        T++;
+    }
+    return 0;
+}
