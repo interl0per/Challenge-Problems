@@ -1,0 +1,113 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+#define MOD 1000000007
+
+struct node
+{
+    int digit[4];
+    vector<int> neighbors;
+    int depth;
+    bool visited = false;
+};
+node graph[10000];
+int ctoi(int a[])
+{
+    return a[0]*1000 + a[1]*100 + a[2]*10 + a[3];
+}
+int bfs(int start, int target)
+{
+    queue<int> q;
+    q.push(start);
+    graph[start].depth = 0;
+    graph[start].visited = true;
+    while(!q.empty())
+    {
+        int x = q.front();
+        q.pop();
+        if(x==target)     return graph[x].depth;
+        //cout<<"ME: "<<x<<'\n';
+
+        for(int neighbor : graph[x].neighbors)
+        {
+            //cout<<neighbor<<'\n';
+            if(!graph[neighbor].visited)
+            {
+                graph[neighbor].depth = graph[x].depth+1;
+                q.push(neighbor);
+                graph[neighbor].visited = true;
+            }
+        }
+    }
+    return -1;
+}
+
+int main()
+{
+    int T;
+    cin>>T;
+    //initialize digits
+    for(int i =0; i < 10000; i++)
+    {
+        int mul = 1000;
+        for(int j = 0; j < 4; j++)
+        {
+            graph[i].digit[j] = (i/mul)%10;
+            mul/=10;
+        }
+        for(int j = 0; j < 4; j++)
+        {//the modified digit
+            int dup = 0;
+            int ddown = 0;
+            int mul = 1000;
+            for(int k = 0; k < 4; k++)
+            {
+                if(k==j)
+                {
+                    int up = (graph[i].digit[k]+1)%10;
+                    int down = (graph[i].digit[k]-1);
+
+                    if(down < 0)
+                        down = 9;
+
+                    dup += mul*up;
+                    ddown += mul*down;
+                }
+                else
+                {
+                    dup += mul*graph[i].digit[k];
+                    ddown += mul*graph[i].digit[k];
+                }
+                mul/=10;
+            }
+            graph[i].neighbors.push_back(dup);
+            graph[i].neighbors.push_back(ddown);
+        }
+    }
+    while(T--)
+    {
+        int strt[4], target[4];
+
+        for(int i = 0; i < 4; i++)
+            cin>>strt[i];
+        for(int i =0; i < 4; i++)
+            cin>>target[i];
+
+        for(int i =0; i < 10000; i++)
+        {
+            graph[i].visited = false;
+        }
+
+        int n;
+        cin>>n;
+        for(int i= 0; i < n; i++)
+        {
+            int fbdn[4];
+            cin>>fbdn[0]>>fbdn[1]>>fbdn[2]>>fbdn[3];
+            graph[ctoi(fbdn)].visited = true;
+        }
+        cout<<bfs(ctoi(strt), ctoi(target))<<'\n';
+    }
+    return 0;
+}
