@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+#define MAXN 10
+using namespace std;
+
+int n;
+map<string, bool> solns;
+
+struct node
+{
+    string grid;
+    int depth = 1;
+    pair<int, int> pos;
+    node()
+    {
+        grid = string(100, '.');
+    }
+};
+node state;
+
+void dfs()
+{
+    if(state.depth == 8)
+    {
+        solns[state.grid] = 1;
+        return;
+    }
+    for(int i =-1; i <= 1; i++)
+        for(int j = -1; j <= 1; j++)
+            if(i==0 || j == 0)
+                if(state.grid[(state.pos.first + i)*MAXN +state.pos.second + j] == 'X')
+                {//can mine this piece
+                    pair<int, int> iPos = state.pos;
+                    state.pos = make_pair(iPos.first + i, iPos.second + j);
+                    state.grid[state.pos.first*MAXN + state.pos.second] = 'O';// + v.depth;//mark visited
+                    state.depth++;
+                    dfs();
+                    //unmake move
+                    state.grid[state.pos.first*MAXN + state.pos.second] = 'X';
+                    state.pos = iPos;
+                    state.depth--;
+                }
+}
+
+int main()
+{
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        state = node();
+        solns.clear();
+        
+        cin>>n;
+        
+        for(int i =1; i <= n; i++)
+            for(int j =1; j <= n; j++)
+                cin>>state.grid[i*MAXN+j];
+        //cout<<state.grid;
+        for(int i =1; i <= n; i++)
+            for(int j =1; j <= n; j++)
+            {
+                if(state.grid[i*MAXN + j] == 'X')
+                {
+                    state.grid[i*MAXN + j] = 'O';
+                    state.pos = make_pair(i,j);
+                    dfs();
+                    state.grid[i*MAXN + j] = 'X';
+                }
+            }
+        cout<<solns.size()<<'\n';
+    }
+    return 0;
+}
