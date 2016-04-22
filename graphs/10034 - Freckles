@@ -1,0 +1,110 @@
+//package uva;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+
+class Vertex
+{
+    float x, y;
+    int idx;
+}
+
+class Edge implements Comparable
+{
+    Vertex v1, v2;
+    double weight;
+
+    public Edge(Vertex a, Vertex b) {
+	v1 = a;
+	v2 = b;
+	weight = Math
+		.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+    }
+
+    @Override
+    public int compareTo(Object arg0)
+    {
+	Edge e = (Edge) arg0;
+	if (e.weight - weight > 0)
+	{
+	    return -1;
+	}
+	return 1;
+    }
+}
+
+class union_find
+{
+    ArrayList<Integer> parent;
+
+    public union_find(int n) {
+	parent = new ArrayList<Integer>();
+	for (int i = 0; i < n; i++)
+	    parent.add(i);
+    }
+
+    int find(int a)
+    {
+	if (parent.get(a) == a)
+	    return a;
+	else
+	{
+	    parent.set(a, find(parent.get(a)));
+	    return parent.get(a);
+	}
+    }
+
+    void unite(int a, int b)
+    {
+	parent.set(find(a), find(b));
+    }
+}
+
+class Main
+{
+    public static void main(String[] args)
+    {
+	Scanner sc = new Scanner(System.in);
+	int T = sc.nextInt();
+	for (int t = 0; t < T; t++)
+	{
+	    int n = sc.nextInt();
+	    ArrayList<Vertex> vts = new ArrayList<Vertex>(n);
+	    union_find uf = new union_find(n);
+
+	    for (int i = 0; i < n; i++)
+	    {
+		Vertex v = new Vertex();
+		v.x = sc.nextFloat();
+		v.y = sc.nextFloat();
+		v.idx = vts.size();
+
+		vts.add(v);
+	    }
+
+	    ArrayList<Edge> eg = new ArrayList<Edge>();
+	    for (int i = 0; i < n; i++)
+	    {
+		for (int j = i + 1; j < n; j++)
+		{
+		    eg.add(new Edge(vts.get(i), vts.get(j)));
+		}
+	    }
+	    Collections.sort(eg);
+	    double sum = 0;
+	    for (int i = 0; i < eg.size(); i++)
+	    {
+		if (uf.find(eg.get(i).v1.idx) != uf.find(eg.get(i).v2.idx))
+		{
+		    uf.unite(eg.get(i).v1.idx, eg.get(i).v2.idx);
+		    sum += eg.get(i).weight;
+		}
+	    }
+	    System.out.println(String.format("%.2f", sum));
+	    if(t < T-1)
+		System.out.println();
+	}
+    }
+}
